@@ -23,7 +23,12 @@
           <div class="cart-total">
             <p>Загальна сума: <span id="cartTotal">0</span> грн</p>
           </div>
-          <button onclick="checkout()" class="checkout-btn">Оформити замовлення</button>
+          <form id="cartOrderForm" class="cart-order-form">
+            <input type="text" placeholder="ПІБ" required />
+            <input type="tel" placeholder="Номер телефону" required />
+            <input type="text" placeholder="Модель пристрою" required />
+            <button type="submit" class="checkout-btn">Оформити замовлення</button>
+          </form>
         </div>
       </div>
     </div>
@@ -89,18 +94,10 @@
   </section>
 
   <section class="order-form">
-    <h2>Замовити плівку</h2>
-    <form>
-      <input type="text" placeholder="ПІБ" required />
-      <input type="tel" placeholder="Номер телефону" required />
-      <select required>
-        <option value="">Оберіть тип плівки</option>
-        <option value="Ultraclear">Ultraclear</option>
-        <option value="Supreme">Supreme</option>
-        <option value="Privacy">Anti-Spy</option>
-        <option value="Matte">Matte</option>
-      </select>
-      <button type="submit">Замовити</button>
+    <h2>Модель вашого пристрою</h2>
+    <form id="deviceForm">
+      <input type="text" placeholder="Введіть модель пристрою" required />
+      <button type="submit">Зберегти</button>
     </form>
     <p class="contact">
       Телефон: <a href="tel:0960962211">0960962211</a>, <a href="tel:0930962211">0930962211</a>
