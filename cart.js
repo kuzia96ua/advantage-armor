@@ -26,6 +26,7 @@ function updateCartDisplay() {
                 <div>
                     <p>${item.name}</p>
                     <p>Кількість: ${item.quantity}</p>
+                    ${item.deviceModel ? `<p>Модель: ${item.deviceModel}</p>` : ''}
                 </div>
                 <div>
                     <p>${itemTotal} грн</p>
@@ -42,19 +43,25 @@ function updateCartDisplay() {
 function addToCart(name, price, button) {
     const quantityInput = button.parentElement.querySelector('.quantity-input');
     const quantity = parseInt(quantityInput.value);
+    const deviceModel = document.querySelector('#deviceForm input').value;
 
-    const existingItemIndex = cart.findIndex(item => item.name === name);
+    if (!deviceModel) {
+        alert('Будь ласка, спочатку введіть модель вашого пристрою');
+        document.querySelector('#deviceForm input').focus();
+        return;
+    }
+
+    const existingItemIndex = cart.findIndex(item => item.name === name && item.deviceModel === deviceModel);
 
     if (existingItemIndex !== -1) {
         cart[existingItemIndex].quantity += quantity;
     } else {
-        cart.push({ name, price, quantity });
+        cart.push({ name, price, quantity, deviceModel });
     }
 
     updateCartDisplay();
     quantityInput.value = 1;
 
-    // Show confirmation
     const confirmation = document.createElement('div');
     confirmation.textContent = 'Додано до кошика!';
     confirmation.style.position = 'fixed';
@@ -92,13 +99,43 @@ function checkout() {
         alert('Кошик порожній');
         return;
     }
-
-    const orderForm = document.querySelector('.order-form form');
-    orderForm.scrollIntoView({ behavior: 'smooth' });
-    toggleCart();
+    
+    document.querySelector('#cartOrderForm input').focus();
 }
 
-// Close cart modal when clicking outside
+document.getElementById('cartOrderForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (cart.length === 0) {
+        alert('Додайте товари в кошик перед оформленням замовлення');
+        return;
+    }
+
+    const formData = new FormData(e.target);
+    const orderData = {
+        customerName: formData.get('ПІБ'),
+        phone: formData.get('Номер телефону'),
+        deviceModel: formData.get('Модель пристрою'),
+        items: cart,
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    };
+
+    console.log('Замовлення:', orderData);
+    
+    cart = [];
+    updateCartDisplay();
+    e.target.reset();
+    toggleCart();
+    
+    alert('Дякуємо за замовлення! Ми зв\'яжемося з вами найближчим часом.');
+});
+
+document.getElementById('deviceForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const deviceModel = e.target.querySelector('input').value;
+    alert(`Модель пристрою "${deviceModel}" збережено!`);
+});
+
 document.addEventListener('click', (e) => {
     const cartModal = document.getElementById('cartModal');
     const cartIcon = document.querySelector('.cart-icon');
@@ -108,5 +145,4 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Initialize cart display
 updateCartDisplay();
